@@ -1,5 +1,12 @@
 package edu.guilford;
 
+/**
+ * The Card class is a singular card in a deck of cards.
+ * @param suit The suit of the card.
+ * @param rank The rank of the card. (2-10, J, Q, K, A)
+ * @param value The value of the card. (2-10, J, Q, K = 10, A = 1 or 11)
+ * @param color The color of the card. (Red or Black)
+ */
 public class Card {
     //attributes
     private String suit;
@@ -8,7 +15,14 @@ public class Card {
     private String color;
 
     //constructor
-    public Card(String suit, String rank, int value) {
+    /**
+     * Creates a card with a suit, rank, and value.
+     * @param suit
+     * @param rank
+     * value and color are automatically determined by the rank
+     * Aces are initially set to 1
+     */
+    public Card(String suit, String rank) {
         this.suit = suit;
         this.rank = rank;
         //rank determins the value
@@ -32,6 +46,9 @@ public class Card {
     }
 
     //create a random card
+    /**
+     * Creates a random card using random indexing of the suits and ranks arrays.
+     */
     public Card() {
         String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
         String[] ranks = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
@@ -48,43 +65,92 @@ public class Card {
     }
 
     //methods
+    /**
+     * Returns the suit of the card.
+     * @return String suit
+     */
     public String getSuit() {
         return suit;
     }
 
+    /**
+     * Returns the rank of the card.
+     * @return String rank
+     */
     public String getRank() {
         return rank;
     }
 
+    /**
+     * Returns the value of the card.
+     * @return int value
+     */
     public int getValue() {
         return value;
     }
 
+    /**
+     * Returns the color of the card.
+     * @return String color
+     */
     public String getColor() {
         return color;
     }
 
+    //setters
+    /**
+     * Sets the suit of the card.
+     * @param suit
+     */
     public void setSuit(String suit) {
         this.suit = suit;
     }
 
+    /**
+     * Sets the rank of the card.
+     * @param rank
+     */
     public void setRank(String rank) {
         this.rank = rank;
     }
 
+    /**
+     * Sets the value of the card.
+     * @param value
+     */
     public void setValue(int value) {
         this.value = value;
     }
 
+    /**
+     * Sets the color of the card.
+     * @param color
+     */
     public void setColor(String color) {
         this.color = color;
     }
     
-    //equals
-    public boolean equals(Card card) {
-        return suit.equals(card.getSuit()) && rank.equals(card.getRank()) && value == card.getValue();
+    //override equals
+    /**
+     * Checks if two cards are equal.
+     * @param obj
+     * @return boolean
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Card) {
+            Card card = (Card) obj;
+            return suit.equals(card.getSuit()) && rank.equals(card.getRank()) && value == card.getValue();
+        } else {
+            return false;
+        }
     }
 
+    //toString
+    /**
+     * Returns a string representation of the card.
+     * @return String
+     */
     public String toString() {
         return rank + " of " + suit;
     }
