@@ -27,6 +27,7 @@ public class Computer extends Player {
      */
     public Computer() {
         super("Bot");
+        this.visibleCards = new ArrayList<>();
     }
 
     // methods

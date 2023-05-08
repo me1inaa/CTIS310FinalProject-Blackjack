@@ -3,7 +3,9 @@ package edu.guilford;
 import javafx.scene.Node;
 
 import java.util.ArrayList;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -36,9 +38,13 @@ import javafx.stage.Stage;
 
 public class BlackjackPane extends Application {
 
+    private BlackjackGame game;
     private Deck deck;
     private Hand dealerHand;
     private Hand playerHand;
+    private User user;
+
+
     private Label dealerLabel;
     private Label playerLabel;
     private Label resultLabel;
@@ -46,36 +52,41 @@ public class BlackjackPane extends Application {
     private Button standButton;
     private Label playerValueLabel;
     private Label dealerValueLabel;
-    private BlackjackGame game;
+    
 
     private SimpleStringProperty loggedInUsername = new SimpleStringProperty();
     private HBox postGameButtonBox;
     private Stage gameStage;
     private HBox gameButtonBox;
+    private static Path userFile;
     
     public static void main(String[] args) {
+        try {
+            userFile = Paths.get(BlackjackPane.class.getResource("/edu/guilford/data.txt").toURI());
+            System.out.println(userFile);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException{
         primaryStage.setTitle("Blackjack");
         primaryStage.setResizable(false);
+        
+        
 
-        User user = new User("test", "test");
-        this.game = new BlackjackGame(user);
-        this.game.deal();
-        deck = this.game.getDeck();
-        dealerHand = this.game.getDealer().getHand();
-        playerHand = this.game.getPlayers().get(1).getHand();
-
-
-        BorderPane root = createGUI();
+        //initializeGame();
+        
+        //BorderPane root = createGUI();
 
         Scene scene = new Scene(root, 1000, 800);
         primaryStage.setScene(scene);
+
         showLoginDialog(primaryStage);
     }
+
     private void showLoginDialog(Stage primaryStage) {
         DialogPane dialogPane = new DialogPane();
         dialogPane.setHeaderText("Login");
@@ -115,6 +126,7 @@ public class BlackjackPane extends Application {
             if (authenticateUser(username, balance)) {
                 loggedInUsername.set(username);
                 primaryStage.close();
+                 initializeGame();
                 showDepositWithdrawScreen(username);
             } else {
                 showAlert(Alert.AlertType.ERROR, "Invalid username or balance", "Please enter a valid username and balance.");
@@ -127,10 +139,12 @@ public class BlackjackPane extends Application {
     }
 
     
-    
+    //Set the user attribute to a User object, that is created either with data from the userFile or as a new User for someone who hasn't loggged in before.
     private boolean authenticateUser(String username, String balance) {
         try {
-            String data = new String(Files.readAllBytes(Paths.get("C:/Users/User/Downloads/CTIS310FinalProject-Blackjack-main (3)/CTIS310FinalProject-Blackjack-main/committest/src/main/resources/edu/guilford/data.txt")));
+            //Path dataLocation = Paths.get(BlackjackPane.class.getResource("/data.txt").toURI());
+            //FileReader dataFile = new F
+            String data = new String(Files.readAllBytes(userFile));
             String[] usernames = data.split("\n");
             boolean userExists = false;
     
@@ -145,9 +159,9 @@ public class BlackjackPane extends Application {
             if (!userExists) {
                 // Append the new username and password to the file
                 String newUser = username + "," + balance;
-                Files.write(Paths.get("C:/Users/User/Downloads/CTIS310FinalProject-Blackjack-main (3)/CTIS310FinalProject-Blackjack-main/committest/src/main/resources/edu/guilford/data.txt"), (newUser + "\n").getBytes(), StandardOpenOption.APPEND);
+                Files.write(userFile, (newUser + "\n").getBytes(), StandardOpenOption.APPEND);
             }
-    
+            user = new User(username, Double.parseDouble(balance));
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -158,13 +172,11 @@ public class BlackjackPane extends Application {
    
     
     
-    private double userBalance = 0.0;
+    private double userBalance; 
     private void updateBalanceInFile(String username, double newBalance) {
         try {
-            String filePath = "C:/Users/User/Downloads/CTIS310FinalProject-Blackjack-main (3)/CTIS310FinalProject-Blackjack-main/committest/src/main/resources/edu/guilford/data.txt";
-            Path path = Paths.get(filePath);
             
-            List<String> lines = Files.readAllLines(path);
+            List<String> lines = Files.readAllLines(userFile);
             
             // Find the line corresponding to the given username
             for (int i = 0; i < lines.size(); i++) {
@@ -178,7 +190,7 @@ public class BlackjackPane extends Application {
             }
             
             // Write the updated contents back to the file
-            Files.write(path, lines, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(userFile, lines, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -283,22 +295,14 @@ public class BlackjackPane extends Application {
     }
 
     private void initializeGame() {
-        /*deck = new Deck();
-        dealerHand = new Hand();
-        playerHand = new Hand();
-
-        deck.shuffle();
-
-        // Deal initial cards
-        dealerHand.addCard(deck.draw());
-        
-        
-        
-
-        playerHand.addCard(deck.drawCard());*/
-        
+        this.game = new BlackjackGame(this.user);
+        this.game.deal();
+        deck = this.game.getDeck();
+        dealerHand = this.game.getDealer().getHand();
+        playerHand = this.game.getPlayers().get(1).getHand();
         
     }
+
     private void resetGame() {
         deck = new Deck();
         dealerHand = new Hand();
@@ -420,14 +424,6 @@ public class BlackjackPane extends Application {
         return root;
     }
     
-    
-    
-    
-    
-    
-    
-    
-
     private HBox createHandBox(String name, Hand hand, boolean isDealer) {
         HBox box = new HBox(20);
         box.setAlignment(Pos.CENTER_LEFT);

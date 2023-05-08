@@ -180,17 +180,20 @@ public class BlackjackGame {
         // deal two cards to the dealer
         dealer.getHand().add(deck.draw());
         dealer.getHand().add(deck.draw());
-        updateVisableCards();
+        updateVisibleCards();
     }
 
     /**Updates the cards the computer can see */
-    public void updateVisableCards() {
+    public void updateVisibleCards() {
         computer.setDealerCard(dealer.getHand().get(1));
-        //clear the visible cards
-        computer.getVisibleCards().clear();
+        //clear the visible cards if there are cards in the list
+        if (computer.getVisibleCards().size() > 0) {
+            computer.getVisibleCards().clear();
+        }
         //add the dealer's visible cards
         computer.getVisibleCards().add(dealer.getHand().get(1));
         for (Player player : players) {
+            System.out.println(player);
             //adds the cards from teh player's hand to the computer's visible cards
             computer.getVisibleCards().addAll(player.getHand());
         }
