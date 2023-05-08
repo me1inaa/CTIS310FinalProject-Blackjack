@@ -39,13 +39,41 @@ public class Deck extends LinkedList<Card>{
         }
     }
 
-    //deal a card
+    //draw a card
     /**
      * Removes the first card from the deck and returns it.
      * @return The first card in the deck.
      */
-    public Card deal() {
+    public Card draw() {
         return this.remove(0);
+    }
+
+    //add cards to the deck
+    /**
+     * Adds cards to the deck.
+     * @param LinkedList<card> The cards to be added to the deck.
+     */
+    public void addCards(LinkedList<Card> cards) {
+        this.addAll(cards);
+    }
+
+    //resets the deck
+    /**
+     * Resets the deck to a realistic deck of cards (52 cards) in sequence.
+     * Shuffles the deck.
+     */
+    public void reset() {
+        this.clear();
+        String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
+        String[] ranks = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9",
+                          "10", "Jack", "Queen", "King"};
+        for (String suit : suits) {
+            for (int i = 0; i < ranks.length; i++) {
+                Card card = new Card(suit, ranks[i]);
+                this.add(card);
+            }
+        }
+        shuffle();
     }
 
 }

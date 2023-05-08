@@ -20,7 +20,7 @@ public class Card {
      * @param suit
      * @param rank
      * value and color are automatically determined by the rank
-     * Aces are initially set to 1
+     * Aces are initially set to 11
      */
     public Card(String suit, String rank) {
         this.suit = suit;
@@ -28,9 +28,9 @@ public class Card {
         //rank determins the value
         // 2-10 are value listed
         // J, Q, K = 10
-        // A = 1 or 11, y default 1
+        // A = 1 or 11, by default 11
         if (rank.equals("Ace")) {
-            value = 1;
+            value = 11;
         } else if (rank.equals("Jack") || rank.equals("Queen") || rank.equals("King")) {
             value = 10;
         } else {
