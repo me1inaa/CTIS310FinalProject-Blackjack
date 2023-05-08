@@ -1,6 +1,7 @@
 package edu.guilford;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The Hand class is a LinkedList of Cards.
@@ -17,7 +18,13 @@ public class Hand extends LinkedList<Card>{
     public Hand() {
         super();
     }
+    public void addCard(Card card) {
+        this.add(card);
+      }
 
+      public List<Card> getCards() {
+        return this;
+      }
     /**
      * Creates a hand with a card. Used for splitting.
      * @param card
@@ -50,13 +57,7 @@ public class Hand extends LinkedList<Card>{
     /**
      * Calculates the value of the hand, and write to value attribute.
      */
-    public void calcValue() {
-        int total = 0;
-        for (Card card : this) {
-            total += card.getValue();
-        }
-        this.setValue(total);
-    }
+    
 
     //split
     /**
@@ -68,7 +69,32 @@ public class Hand extends LinkedList<Card>{
         newHand.add(this.remove(1));
         return newHand;
     }
+    public void calcValue() {
+        int total = 0;
+        for (Card card : this) {
+            total += card.getValue();
+        }
+        this.setValue(total);
+    }
+public int getScore() {
+  int score = 0;
+  int numAces = 0;
 
+  for (Card card : this) {
+    score += card.getValue();
+
+    if (card.getRank().equals("Ace")) {
+      numAces++;
+    }
+  }
+
+  while (score > 21 && numAces > 0) {
+    score -= 10;
+    numAces--;
+  }
+
+  return score;
+}
     //toString
     /**
      * Returns a string representation of the hand.
