@@ -1,7 +1,6 @@
 package edu.guilford;
 
-/**
- * The Player class represents a player in the game of Blackjack.
+/** The Player class represents a player in the game of Blackjack.
  * @param name The name of the player.
  * @param hand The hand of the player.
  * @param bet The bet of the player.
@@ -19,8 +18,7 @@ public class Player {
     protected double balance;
 
     //constructor
-    /**
-     * Creates a player with a name, an empty hand, and a balance.
+    /** Creates a player with a name, an empty hand, and a balance.
      * @param name
      * @param balance
      */
@@ -31,8 +29,7 @@ public class Player {
         this.balance = balance;
     }
     
-    /**
-     * Creates a new player with a name, an empty hand, and a default baleance of 1000.
+    /** Creates a new player with a name, an empty hand, and a default baleance of 1000.
      * @param name
      */
     public Player(String name) {
@@ -43,64 +40,56 @@ public class Player {
     }
 
     //methods
-    /**
-     * Returns the name of the player.
+    /** Returns the name of the player.
      * @return String name
      */
     public String getName() {
         return name;
     }
 
-    /**
-     * Returns the hand of the player.
+    /** Returns the hand of the player.
      * @return Hand hand
      */
     public Hand getHand() {
         return hand;
     }
 
-    /**
-     * Returns the bet of the player.
+    /** Returns the bet of the player.
      * @return int bet
      */
     public double getBet() {
         return bet;
     }
 
-    /**
-     * Returns the balance of the player.
+    /** Returns the balance of the player.
      * @return double balance
      */
     public double getBalance() {
         return balance;
     }
 
-    /**
-     * Sets the name of the player.
+    /** Sets the name of the player.
      * @param name
      */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Sets the hand of the player.
+    /** Sets the hand of the player.
      * @param hand
      */
     public void setHand(Hand hand) {
         this.hand = hand;
     }
 
-    /**
-     * Sets the bet of the player.
+    /** Sets the bet of the player.
      * @param bet
      */
     public void setBet(double bet) {
         this.bet = bet;
     }
 
-    /**
-     * Sets the balance of the player.
+    /** Sets the balance of the player.
      * @param balance
      */
     public void setBalance(double balance) {
@@ -108,15 +97,13 @@ public class Player {
     }
 
     //split
-    /**
-     * Splits the hand of the player into two hands.
+    /** Splits the hand of the player into two hands.
      */
     public void split() {
         this.splitHand = hand.split();
     }
 
-    /**
-     * Returns the split hand of the player.
+    /** Returns the split hand of the player.
      * @return Hand splitHand
      */
     public Hand getSplitHand() {
@@ -124,8 +111,7 @@ public class Player {
     }
 
     //clear the hand and bet for the next round
-    /**
-     * Clears the hand and bet of the player for the next round.
+    /** Clears the hand and bet of the player for the next round.
      */
     public void reset() {
         this.hand = new Hand();
@@ -134,16 +120,14 @@ public class Player {
     }
 
     //double down
-    /**
-     * Doubles the bet of the player.
+    /** Doubles the bet of the player.
      */
     public void doubleDown() {
         this.bet *= 2;
     }
 
     //toString
-    /**
-     * Returns a string representation of the player.
+    /** Returns a string representation of the player.
      * The name, hand, bet, and balance.
      * @return String representation of the player
      */

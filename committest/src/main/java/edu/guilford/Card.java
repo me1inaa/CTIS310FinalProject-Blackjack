@@ -1,7 +1,6 @@
 package edu.guilford;
 
-/**
- * The Card class is a singular card in a deck of cards.
+/** The Card class is a singular card in a deck of cards.
  * @param suit The suit of the card.
  * @param rank The rank of the card. (2-10, J, Q, K, A)
  * @param value The value of the card. (2-10, J, Q, K = 10, A = 1 or 11)
@@ -15,8 +14,7 @@ public class Card {
     private String color;
 
     //constructor
-    /**
-     * Creates a card with a suit, rank, and value.
+    /** Creates a card with a suit, rank, and value.
      * @param suit
      * @param rank
      * value and color are automatically determined by the rank
@@ -46,8 +44,7 @@ public class Card {
     }
 
     //create a random card
-    /**
-     * Creates a random card using random indexing of the suits and ranks arrays.
+    /** Creates a random card using random indexing of the suits and ranks arrays.
      */
     public Card() {
         String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
@@ -65,32 +62,28 @@ public class Card {
     }
 
     //methods
-    /**
-     * Returns the suit of the card.
+    /** Returns the suit of the card.
      * @return String suit
      */
     public String getSuit() {
         return suit;
     }
 
-    /**
-     * Returns the rank of the card.
+    /** Returns the rank of the card.
      * @return String rank
      */
     public String getRank() {
         return rank;
     }
 
-    /**
-     * Returns the value of the card.
+    /** Returns the value of the card.
      * @return int value
      */
     public int getValue() {
         return value;
     }
 
-    /**
-     * Returns the color of the card.
+    /** Returns the color of the card.
      * @return String color
      */
     public String getColor() {
@@ -98,32 +91,28 @@ public class Card {
     }
 
     //setters
-    /**
-     * Sets the suit of the card.
+    /** Sets the suit of the card.
      * @param suit
      */
     public void setSuit(String suit) {
         this.suit = suit;
     }
 
-    /**
-     * Sets the rank of the card.
+    /** Sets the rank of the card.
      * @param rank
      */
     public void setRank(String rank) {
         this.rank = rank;
     }
 
-    /**
-     * Sets the value of the card.
+    /** Sets the value of the card.
      * @param value
      */
     public void setValue(int value) {
         this.value = value;
     }
 
-    /**
-     * Sets the color of the card.
+    /** Sets the color of the card.
      * @param color
      */
     public void setColor(String color) {
@@ -131,8 +120,7 @@ public class Card {
     }
     
     //override equals
-    /**
-     * Checks if two cards are equal.
+    /** Checks if two cards are equal.
      * @param obj
      * @return boolean
      */
@@ -147,8 +135,7 @@ public class Card {
     }
 
     //toString
-    /**
-     * Returns a string representation of the card.
+    /** Returns a string representation of the card.
      * @return String
      */
     public String toString() {

@@ -2,8 +2,7 @@ package edu.guilford;
 
 import java.util.ArrayList;
 
-/**
- * The BlackjackGame class represents a game of Blackjack.
+/** The BlackjackGame class represents a game of Blackjack.
  * 
  * @param players   The list of players in the game.
  * @param dealer    The dealer in the game.
@@ -35,12 +34,11 @@ public class BlackjackGame {
     }
 
     // constructor
-    /**
-     * Creates a game of Blackjack with a list of players.
+    /** Creates a game of Blackjack with a list of players.
      * 
-     * @param users The list of users in the game.
+     * @param user The list of users in the game.
      */
-    public BlackjackGame(ArrayList<User> users) {
+    public BlackjackGame(User user) {
         // instantiates a new deck
         deck = new Deck();
         // instantiates a new computer
@@ -50,17 +48,14 @@ public class BlackjackGame {
         // adds the computer to the list of players
         this.players.add(computer);
         // add the player associated with the user to the list of players
-        for (User user : users) {
-            this.players.add(user);
-        }
+        this.players.add(user);
         // sets the game state to betting
         this.gameState = GameState.BETTING;
 
     }
 
     // methods
-    /**
-     * Returns the list of players.
+    /** Returns the list of players.
      * 
      * @return ArrayList<Player> players
      */
@@ -68,8 +63,7 @@ public class BlackjackGame {
         return players;
     }
 
-    /**
-     * Returns the dealer.
+    /** Returns the dealer.
      * 
      * @return Player dealer
      */
@@ -77,8 +71,7 @@ public class BlackjackGame {
         return dealer;
     }
 
-    /**
-     * Returns the computer.
+    /** Returns the computer.
      * 
      * @return Computer computer
      */
@@ -86,8 +79,7 @@ public class BlackjackGame {
         players.add(user);
     }
 
-    /**
-     * Adds a user to the list of players.
+    /** Adds a user to the list of players.
      * 
      * @param user
      */
@@ -95,8 +87,7 @@ public class BlackjackGame {
         players.remove(user);
     }
 
-    /**
-     * Adds a computer to the list of players.
+    /** Adds a computer to the list of players.
      * 
      * @param computer
      */
@@ -104,8 +95,7 @@ public class BlackjackGame {
         players.add(computer);
     }
 
-    /**
-     * Removes a computer from the list of players.
+    /** Removes a computer from the list of players.
      * 
      * @param computer
      */
@@ -113,8 +103,7 @@ public class BlackjackGame {
         players.remove(computer);
     }
 
-    /**
-     * Sets the game state.
+    /** Sets the game state.
      * 
      * @param state
      */
@@ -122,8 +111,7 @@ public class BlackjackGame {
         this.gameState = state;
     }
 
-    /**
-     * Returns the game state.
+    /** Returns the game state.
      * 
      * @return GameState gameState
      */
@@ -131,8 +119,7 @@ public class BlackjackGame {
         return gameState;
     }
 
-    /**
-     * Sets the deck.
+    /** Sets the deck.
      * 
      * @param deck
      */
@@ -140,8 +127,7 @@ public class BlackjackGame {
         this.deck = deck;
     }
 
-    /**
-     * Returns the deck.
+    /** Returns the deck.
      * 
      * @return Deck deck
      */
@@ -149,8 +135,7 @@ public class BlackjackGame {
         return deck;
     }
 
-    /**
-     * Sets the computer.
+    /** Sets the computer.
      * 
      * @param computer
      */
@@ -158,8 +143,7 @@ public class BlackjackGame {
         this.computer = computer;
     }
 
-    /**
-     * Returns the computer.
+    /** Returns the computer.
      * 
      * @return Computer computer
      */
@@ -167,8 +151,7 @@ public class BlackjackGame {
         return computer;
     }
 
-    /**
-     * Sets the list of players.
+    /** Sets the list of players.
      * 
      * @param players
      */
@@ -176,8 +159,7 @@ public class BlackjackGame {
         this.players = players;
     }
 
-    /**
-     * Sets the dealer.
+    /** Sets the dealer.
      * 
      * @param dealer
      */
@@ -185,8 +167,7 @@ public class BlackjackGame {
         this.dealer = dealer;
     }
 
-    /**
-     * Deals two cards to each player and two cards to the dealer.
+    /** Deals two cards to each player and two cards to the dealer.
      */
     public void deal() {
         // sets the game state to dealing
@@ -199,15 +180,29 @@ public class BlackjackGame {
         // deal two cards to the dealer
         dealer.getHand().add(deck.draw());
         dealer.getHand().add(deck.draw());
+        updateVisableCards();
     }
 
+    /**Updates the cards the computer can see */
+    public void updateVisableCards() {
+        computer.setDealerCard(dealer.getHand().get(1));
+        //clear the visible cards
+        computer.getVisibleCards().clear();
+        //add the dealer's visible cards
+        computer.getVisibleCards().add(dealer.getHand().get(1));
+        for (Player player : players) {
+            //adds the cards from teh player's hand to the computer's visible cards
+            computer.getVisibleCards().addAll(player.getHand());
+        }
+    }
+
+    /**hits for a specific player */
     public void hit(Player player) {
         player.getHand().add(deck.draw());
     }
 
     // increments the game state
-    /**
-     * Increments the game state.
+    /** Increments the game state.
      */
     public void incrementGameState() {
         switch (gameState) {
@@ -230,8 +225,7 @@ public class BlackjackGame {
     }
 
     // resets the game
-    /**
-     * Resets the game.
+    /** Resets the game.
      */
     public void reset() {
         // clears the hands of all players
@@ -247,8 +241,7 @@ public class BlackjackGame {
     }
 
     // dealer's turn
-    /**
-     * Makes the dealer play.
+    /** Makes the dealer play.
      */
     public void dealerTurn() {
         // sets the gameState to dealer playing
@@ -269,8 +262,7 @@ public class BlackjackGame {
     }
 
     // resolves for all players
-    /**
-     * Resolves for all players.
+    /** Resolves for all players.
      */
     public void resolveAll() {
         // sets the gameState to resolving
@@ -331,7 +323,7 @@ public class BlackjackGame {
             }
             // if the dealer has more than the player, the dealer wins
             else if (playerHand.getValue() < dealerHand.getValue()) {
-                System.out.println("Dealer wins.");
+                //System.out.println("Dealer wins.");
                 // removes the bet from the player's balance
                 player.setBalance(player.getBalance() - player.getBet());
             }
@@ -341,8 +333,7 @@ public class BlackjackGame {
     }
 
     // end the game
-    /**
-     * Ends the game.
+    /** Ends the game.
      */
     public void endGame() {
         // sets the gameState to betting
@@ -357,9 +348,9 @@ public class BlackjackGame {
         deck.reset();
     }
 
+
     // toString
-    /**
-     * Returns a string representation of the game.
+    /** Returns a string representation of the game.
      * If the game state is betting or game over, it returns just the players
      * If the game state is dealing or playing, it returns the players and the dealer's first card
      * If the game state is dealer playing or resolving, it returns the players and the dealer's hand

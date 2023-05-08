@@ -48,7 +48,7 @@ public class App extends Application {
         ArrayList<User> users = new ArrayList<User>();
         users.add(user);
         //initialize the game
-        BlackjackGame game = new BlackjackGame(users);
+        BlackjackGame game = new BlackjackGame(user);
         System.out.println(game);
         //prompt each user for a bet
         for (User u : users){

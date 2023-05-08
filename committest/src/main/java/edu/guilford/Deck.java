@@ -8,8 +8,7 @@ import java.util.LinkedList;
 
 public class Deck extends LinkedList<Card>{
     //create a realistic deck of cards (52 cards)
-    /**
-     * Creates a realistic deck of cards (52 cards) in sequence.
+    /** Creates a realistic deck of cards (52 cards) in sequence.
      * Shuffles the deck.
      */
     public Deck() {
@@ -27,8 +26,7 @@ public class Deck extends LinkedList<Card>{
     }
 
     //shuffle the deck
-    /**
-     * Shuffles the deck.
+    /** Shuffles the deck.
      */
     public void shuffle() {
         for (int i = 0; i < this.size(); i++) {
@@ -40,8 +38,7 @@ public class Deck extends LinkedList<Card>{
     }
 
     //draw a card
-    /**
-     * Removes the first card from the deck and returns it.
+    /** Removes the first card from the deck and returns it.
      * @return The first card in the deck.
      */
     public Card draw() {
@@ -49,8 +46,7 @@ public class Deck extends LinkedList<Card>{
     }
 
     //add cards to the deck
-    /**
-     * Adds cards to the deck.
+    /** Adds cards to the deck.
      * @param LinkedList<card> The cards to be added to the deck.
      */
     public void addCards(LinkedList<Card> cards) {
@@ -58,8 +54,7 @@ public class Deck extends LinkedList<Card>{
     }
 
     //resets the deck
-    /**
-     * Resets the deck to a realistic deck of cards (52 cards) in sequence.
+    /** Resets the deck to a realistic deck of cards (52 cards) in sequence.
      * Shuffles the deck.
      */
     public void reset() {

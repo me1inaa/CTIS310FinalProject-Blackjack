@@ -2,6 +2,8 @@ package edu.guilford;
 
 import javafx.scene.Node;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,7 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class BlackjackGame extends Application {
+public class BlackjackPane extends Application {
 
     private Deck deck;
     private Hand dealerHand;
@@ -32,6 +34,7 @@ public class BlackjackGame extends Application {
     private Button standButton;
     private Label playerValueLabel;
     private Label dealerValueLabel;
+    private BlackjackGame game;
 
     public static void main(String[] args) {
         launch(args);
@@ -42,7 +45,13 @@ public class BlackjackGame extends Application {
         primaryStage.setTitle("Blackjack");
         primaryStage.setResizable(false);
 
-        initializeGame();
+        User user = new User("test", "test");
+        this.game = new BlackjackGame(user);
+        this.game.deal();
+        deck = this.game.getDeck();
+        dealerHand = this.game.getDealer().getHand();
+        playerHand = this.game.getPlayers().get(1).getHand();
+
 
         BorderPane root = createGUI();
 
@@ -52,17 +61,17 @@ public class BlackjackGame extends Application {
     }
 
     private void initializeGame() {
-        deck = new Deck();
+        /*deck = new Deck();
         dealerHand = new Hand();
         playerHand = new Hand();
 
         deck.shuffle();
 
         // Deal initial cards
-        dealerHand.addCard(deck.drawCard());
+        dealerHand.addCard(deck.draw());
         
 
-        playerHand.addCard(deck.drawCard());
+        playerHand.addCard(deck.drawCard());*/
         
     }
 
@@ -130,16 +139,16 @@ public class BlackjackGame extends Application {
         cardPane.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
     
         if (isDealer) {
-            if (!hand.getCards().isEmpty()) {
+            if (!hand.isEmpty()) {
                 // Add the first card without the "Hidden" label
-                Card firstCard = hand.getCards().get(0);
+                Card firstCard = hand.get(0);
                 Label firstCardLabel = new Label(firstCard.toString());
                 firstCardLabel.setFont(Font.font(16));
                 firstCardLabel.setTextFill(Color.BLACK);
                 cardPane.getChildren().add(firstCardLabel);
             }
             } else {
-                for (Card card : hand.getCards()) {
+                for (Card card : hand) {
                     Label cardLabel = new Label(card.toString());
                     cardLabel.setFont(Font.font(16));
                     cardLabel.setTextFill(Color.BLACK);
@@ -152,8 +161,8 @@ public class BlackjackGame extends Application {
             return box;
         }
     private void handleHit() {
-        Card card = deck.deal();
-        playerHand.addCard(card);
+        Card card = deck.draw();
+        playerHand.add(card);
     
         Label cardLabel = new Label(card.toString());
         cardLabel.setFont(Font.font(16));
@@ -161,7 +170,7 @@ public class BlackjackGame extends Application {
     
         ((FlowPane) ((HBox) playerLabel.getParent()).getChildren().get(1)).getChildren().add(cardLabel);
     
-        int playerScore = playerHand.getScore();
+        int playerScore = playerHand.getValue();
         playerValueLabel.setText("Player Value: " + playerScore);
     
         if (playerScore > 21) {
@@ -180,9 +189,9 @@ public class BlackjackGame extends Application {
     
         boolean isFirstCard = true;
     
-        while (dealerHand.getScore() < 17) {
-            Card card = deck.drawCard();
-            dealerHand.addCard(card);
+        while (dealerHand.getValue() < 17) {
+            Card card = deck.draw();
+            dealerHand.add(card);
     
             Label cardLabel = new Label(card.toString());
             cardLabel.setFont(Font.font(16));
@@ -192,18 +201,12 @@ public class BlackjackGame extends Application {
             dealerCardPane.getChildren().add(cardLabel);
         }
     
-        int playerScore = playerHand.getScore();
-        int dealerScore = dealerHand.getScore();
+        int playerScore = playerHand.getValue();
+        int dealerScore = dealerHand.getValue();
     
         dealerValueLabel.setText("Dealer Value: " + dealerScore);
     
-        if (dealerScore > 21 || playerScore > dealerScore) {
-            resultLabel.setText("Player wins!");
-        } else if (dealerScore > playerScore) {
-            resultLabel.setText("Dealer wins!");
-        } else {
-            resultLabel.setText("It's a tie!");
-        }
+        this.game.resolveAll();
     }
     private void disableButtons() {
         hitButton.setDisable(true);

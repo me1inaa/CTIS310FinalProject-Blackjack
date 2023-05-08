@@ -2,8 +2,7 @@ package edu.guilford;
 
 import java.util.LinkedList;
 
-/**
- * The Hand class is a LinkedList of Cards.
+/** The Hand class is a LinkedList of Cards.
  * @param value The value of the hand to determine if the player has busted.
  */
 public class Hand extends LinkedList<Card>{
@@ -11,15 +10,13 @@ public class Hand extends LinkedList<Card>{
     private int value = 0;
     
     //constructor
-    /**
-     * Creates an empty hand.
+    /** Creates an empty hand.
      */
     public Hand() {
         super();
     }
 
-    /**
-     * Creates a hand with a card. Used for splitting.
+    /** Creates a hand with a card. Used for splitting.
      * @param card
      */
     public Hand(Card card) {
@@ -29,8 +26,7 @@ public class Hand extends LinkedList<Card>{
     }
 
     //methods
-    /**
-     * Returns the value of the hand.
+    /** Returns the value of the hand.
      * @return int value
      */
     public int getValue() {
@@ -38,8 +34,7 @@ public class Hand extends LinkedList<Card>{
         return value;
     }
 
-    /**
-     * Returns the value of the hand.
+    /** Returns the value of the hand.
      * @return int value
      */
     public void setValue(int value) {
@@ -47,10 +42,7 @@ public class Hand extends LinkedList<Card>{
     }
 
     //calculate total value
-    /**
-     * Calculates the value of the hand, and write to value attribute.
-     */
-    public void calcValue() {
+    private void calcValue() {
         int total = 0;
         for (Card card : this) {
             total += card.getValue();
@@ -59,19 +51,21 @@ public class Hand extends LinkedList<Card>{
     }
 
     //split
-    /**
-     * Removes the second card from the hand and returns it.
+    /** Removes the second card from the hand and returns it.
      * @return an new hand with the second card.
      */
     public Hand split() {
+        if(this.size() != 2 || this.get(0).getValue() != this.get(1).getValue()) {
+            System.out.println("You can only split on the first turn and if the first two cards are the same.");
+            return null;
+        }
         Hand newHand = new Hand();
         newHand.add(this.remove(1));
         return newHand;
     }
 
     //toString
-    /**
-     * Returns a string representation of the hand.
+    /** Returns a string representation of the hand.
      * @return String output
      */
     @Override
