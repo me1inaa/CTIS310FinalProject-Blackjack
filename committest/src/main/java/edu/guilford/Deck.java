@@ -44,6 +44,12 @@ public class Deck extends LinkedList<Card>{
     public Card draw() {
         return this.remove(0);
     }
+   public Card drawCard() {
+        return this.removeFirst();
+      }
+      public Card deal() {
+        return this.remove(0);
+    }
 
     //add cards to the deck
     /** Adds cards to the deck.
