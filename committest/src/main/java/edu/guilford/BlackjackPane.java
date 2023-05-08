@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.nio.file.Path;
 
 import javafx.application.Application;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -26,6 +28,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -141,6 +144,30 @@ public class BlackjackPane extends Application {
     
     
     private double userBalance = 0.0;
+    private void updateBalanceInFile(String username, double newBalance) {
+        try {
+            String filePath = "C:/Users/User/Downloads/CTIS310FinalProject-Blackjack-main (3)/CTIS310FinalProject-Blackjack-main/committest/src/main/resources/edu/guilford/data.txt";
+            Path path = Paths.get(filePath);
+            
+            List<String> lines = Files.readAllLines(path);
+            
+            // Find the line corresponding to the given username
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines.get(i);
+                String[] userInfo = line.split(",");
+                if (userInfo.length == 2 && userInfo[0].equals(username)) {
+                    // Update the balance in the line
+                    lines.set(i, username + "," + newBalance);
+                    break;
+                }
+            }
+            
+            // Write the updated contents back to the file
+            Files.write(path, lines, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Method to show the deposit/withdraw screen
     private void showDepositWithdrawScreen(String username) {
@@ -183,6 +210,7 @@ public class BlackjackPane extends Application {
                     userBalance += depositAmount;
                     balanceLabel.setText("Current Balance: $" + userBalance);
                     showAlert(Alert.AlertType.INFORMATION, "Deposit Successful", "Deposit of $" + depositAmount + " is successful.");
+                    updateBalanceInFile(username, userBalance);
                 }
             }
         });
@@ -195,6 +223,7 @@ public class BlackjackPane extends Application {
                     userBalance -= withdrawAmount;
                     balanceLabel.setText("Current Balance: $" + userBalance);
                     showAlert(Alert.AlertType.INFORMATION, "Withdraw Successful", "Withdraw of $" + withdrawAmount + " is successful.");
+                    updateBalanceInFile(username, userBalance);
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Insufficient Balance", "Insufficient balance to make the withdrawal.");
                 }
