@@ -150,6 +150,9 @@ public class Computer extends Player {
                 || (handVal == 9 && dealerCard.getValue() >= 3 && dealerCard.getValue() <= 6)) {
             hit = true;
         }
+        else {
+            hit = true;
+        }
     }
 
     private double decideBet() {
