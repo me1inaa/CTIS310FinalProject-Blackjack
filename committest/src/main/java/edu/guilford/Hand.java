@@ -23,6 +23,9 @@ public class Hand extends LinkedList<Card> {
     public void addCard(Card card) {
         this.add(card);
     }
+    public List<Card> getCards() {
+        return this;
+      }
 
     /**
      * Creates a hand with a card. Used for splitting.
@@ -63,7 +66,25 @@ public class Hand extends LinkedList<Card> {
         }
         this.setValue(total);
     }
-
+    public int getScore() {
+        int score = 0;
+        int numAces = 0;
+      
+        for (Card card : this) {
+          score += card.getValue();
+      
+          if (card.getRank().equals("Ace")) {
+            numAces++;
+          }
+        }
+      
+        while (score > 21 && numAces > 0) {
+          score -= 10;
+          numAces--;
+        }
+      
+        return score;
+      }
     // split
     /**
      * Removes the second card from the hand and returns it.

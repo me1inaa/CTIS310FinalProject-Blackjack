@@ -25,6 +25,7 @@ public class Player {
     public Player(String name, double balance) {
         this.name = name;
         this.hand = new Hand();
+        this.splitHand = null;
         this.bet = 0;
         this.balance = balance;
     }
@@ -33,10 +34,7 @@ public class Player {
      * @param name
      */
     public Player(String name) {
-        this.name = name;
-        this.hand = new Hand();
-        this.bet = 0;
-        this.balance = 1000;
+        this(name, 1000);
     }
 
     //methods
