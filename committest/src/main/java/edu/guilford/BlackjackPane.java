@@ -34,6 +34,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import edu.guilford.User;
+import java.util.ArrayList;
 
 public class BlackjackPane extends Application {
 
@@ -197,20 +198,20 @@ public class BlackjackPane extends Application {
     private boolean authenticateUser(String username) {
         try {
             List<String> lines = Files.readAllLines(userFile);
-            
-            // Check if the username already exists
-            if (lines.contains(username)) {
-                return false; // Username already taken
+    
+            // Check if the username exists
+            for (String line : lines) {
+                String[] userInfo = line.split(",");
+                if (userInfo.length >= 1 && userInfo[0].equals(username)) {
+                    return true; // Username exists, login successful
+                }
             }
-            
-            // Append the new username to the file
-            Files.write(userFile, (username + "\n").getBytes(), StandardOpenOption.APPEND);
-            
-            return true; // Username successfully created
+    
+            return false; // Username does not exist
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+    
         return false;
     }
     
@@ -223,7 +224,7 @@ public class BlackjackPane extends Application {
             for (int i = 0; i < lines.size(); i++) {
                 String line = lines.get(i);
                 String[] userInfo = line.split(",");
-                if (userInfo.length == 1 && userInfo[0].equals(username)) {
+                if (userInfo.length == 2 && userInfo[0].equals(username)) {
                     // Update the balance in the line
                     lines.set(i, username + "," + newBalance);
                     break;
@@ -233,7 +234,7 @@ public class BlackjackPane extends Application {
             // Write the updated contents back to the file
             Files.write(userFile, lines, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     
-            // Update the balance of the current user
+            // Update the balance of the current user if applicable
             if (currentUser != null && currentUser.getName().equals(username)) {
                 currentUser.setBalance(newBalance);
             }
@@ -241,14 +242,33 @@ public class BlackjackPane extends Application {
             e.printStackTrace();
         }
     }
+    private User getUserFromDataFile(String username) {
+        try {
+            List<String> lines = Files.readAllLines(userFile);
+            for (String line : lines) {
+                String[] userInfo = line.split(",");
+                if (userInfo.length == 2 && userInfo[0].equals(username)) {
+                    String name = userInfo[0];
+                    double balance = Double.parseDouble(userInfo[1]);
+                    return new User(name, balance);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     // Method to show the deposit/withdraw screen
     private void showDepositWithdrawScreen(String username) {
+        // Retrieve the user's information from the data.txt file
+        User user = getUserFromDataFile(username);
+    
         Stage depositWithdrawStage = new Stage();
         depositWithdrawStage.setTitle("Deposit/Withdraw");
         depositWithdrawStage.setResizable(false);
     
-        Label balanceLabel = new Label("Current Balance: $" + currentUser.getBalance());
+        Label balanceLabel = new Label("Current Balance: $" + user.getBalance());
         TextField depositTextField = new TextField();
         Button depositButton = new Button("Deposit");
         TextField withdrawTextField = new TextField();
@@ -280,10 +300,11 @@ public class BlackjackPane extends Application {
                 if (depositAmount > maxDepositAmount) {
                     showAlert(Alert.AlertType.ERROR, "Invalid Deposit Amount", "The maximum deposit amount is $" + maxDepositAmount);
                 } else {
-                    userBalance += depositAmount;
-                    balanceLabel.setText("Current Balance: $" + userBalance);
+                    double newBalance = user.getBalance() + depositAmount;
+                    user.setBalance(newBalance);
+                    balanceLabel.setText("Current Balance: $" + newBalance);
                     showAlert(Alert.AlertType.INFORMATION, "Deposit Successful", "Deposit of $" + depositAmount + " is successful.");
-                    updateBalanceInFile(username, userBalance);
+                    updateBalanceInFile(username, newBalance);
                 }
             }
         });
@@ -292,11 +313,12 @@ public class BlackjackPane extends Application {
             String withdrawAmountStr = withdrawTextField.getText();
             if (!withdrawAmountStr.isEmpty()) {
                 double withdrawAmount = Double.parseDouble(withdrawAmountStr);
-                if (withdrawAmount <= userBalance) {
-                    userBalance -= withdrawAmount;
-                    balanceLabel.setText("Current Balance: $" + userBalance);
+                if (withdrawAmount <= user.getBalance()) {
+                    double newBalance = user.getBalance() - withdrawAmount;
+                    user.setBalance(newBalance);
+                    balanceLabel.setText("Current Balance: $" + newBalance);
                     showAlert(Alert.AlertType.INFORMATION, "Withdraw Successful", "Withdraw of $" + withdrawAmount + " is successful.");
-                    updateBalanceInFile(username, userBalance);
+                    updateBalanceInFile(username, newBalance);
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Insufficient Balance", "Insufficient balance to make the withdrawal.");
                 }

@@ -1,3 +1,9 @@
 a
-23,0.0
-ag,0.0
+agrecu,0.0
+agrecu
+agrecu2,0.0
+agrecu2
+agrecu3,0.0
+agrecu4,0.0
+agrecu5,0.0
+agrecyy,2.0
