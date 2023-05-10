@@ -156,14 +156,16 @@ public class Computer extends Player {
         }
     }
 
-    private double decideBet() {
+    /** Decides the bet of the computer */
+    public double decideBet() {
         // TODO: decide how much to bet
         this.bet = this.balance / 100;
         this.bet = (Math.round(this.bet * 100.0) / 100.0) * (count - 1);
         // force the bet to be between 1 dollar and the balance
-        if (this.bet < 1) {
-            this.bet = 1;
-        } else if (this.bet > this.balance) {
+        if (this.bet < 100) {
+            this.bet = 100;
+        } 
+        if (this.bet > this.balance) {
             this.bet = this.balance;
         }
         return this.bet;
@@ -214,7 +216,7 @@ public class Computer extends Player {
      */
     @Override
     public double getBet() {
-        return decideBet();
+        return this.bet;
     }
 
 }

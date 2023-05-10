@@ -1,10 +1,15 @@
 package edu.guilford;
 
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /** The Card class is a singular card in a deck of cards.
  * @param suit The suit of the card.
  * @param rank The rank of the card. (2-10, J, Q, K, A)
  * @param value The value of the card. (2-10, J, Q, K = 10, A = 1 or 11)
  * @param color The color of the card. (Red or Black)
+ * @param imagePath The Path to the image of the card.
  */
 public class Card {
     //attributes
@@ -12,6 +17,7 @@ public class Card {
     private String rank;
     private int value;
     private String color;
+    private Path imagePath;
 
     //constructor
     /** Creates a card with a suit, rank, and value.
@@ -40,6 +46,15 @@ public class Card {
             color = "Red";
         } else {
             color = "Black";
+        }
+
+        //set the image
+        try {
+            //System.out.println(this.toString().toLowerCase().replaceAll(" ", "_"));
+            this.imagePath = Paths.get(BlackjackPane.class.getResource("/edu/guilford/cardImages/" + 
+                    this.toString().toLowerCase().replaceAll(" ", "_") + ".png").toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
     }
 
