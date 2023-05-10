@@ -10,6 +10,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+//exceptions
+//can do negative bets
+//deposit amount 
+//draw amount 
+
+
 /**
  * JavaFX App
  */

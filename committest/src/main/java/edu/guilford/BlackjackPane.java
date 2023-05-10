@@ -114,6 +114,7 @@ public class BlackjackPane extends Application {
         betLabel.setText("Bet: $" + currentUser.getBet());
         balanceLabel.setText("Balance: $" + currentUser.getBalance());
     }
+
     private void showSignUpScreen(Stage primaryStage) {
         DialogPane dialogPane = new DialogPane();
         dialogPane.setHeaderText("Sign Up");
@@ -309,18 +310,26 @@ public class BlackjackPane extends Application {
         depositButton.setOnAction(event -> {
             String depositAmountStr = depositTextField.getText();
             if (!depositAmountStr.isEmpty()) {
-                double depositAmount = Double.parseDouble(depositAmountStr);
-                double maxDepositAmount = 10000.0; // Set the maximum deposit amount here
-                if (depositAmount > maxDepositAmount) {
+                try {
+                    double depositAmount = Double.parseDouble(depositAmountStr);
+                    double maxDepositAmount = 10000.0; // Set the maximum deposit amount here
+                    if (depositAmount > maxDepositAmount) {
+                        showAlert(Alert.AlertType.ERROR, "Invalid Deposit Amount",
+                                "The maximum deposit amount is $" + maxDepositAmount);
+                    } else if (depositAmount < 0) {
+                        showAlert(Alert.AlertType.ERROR, "Invalid Deposit Amount",
+                                "The minimum deposit amount is $0");
+                    } else {
+                        double newBalance = currentUser.getBalance() + depositAmount;
+                        currentUser.setBalance(newBalance);
+                        balanceLabel.setText("Current Balance: $" + newBalance);
+                        showAlert(Alert.AlertType.INFORMATION, "Deposit Successful",
+                                "Deposit of $" + depositAmount + " is successful.");
+                        updateBalanceInFile(username, newBalance);
+                    }
+                } catch (NumberFormatException e) {
                     showAlert(Alert.AlertType.ERROR, "Invalid Deposit Amount",
-                            "The maximum deposit amount is $" + maxDepositAmount);
-                } else {
-                    double newBalance = currentUser.getBalance() + depositAmount;
-                    currentUser.setBalance(newBalance);
-                    balanceLabel.setText("Current Balance: $" + newBalance);
-                    showAlert(Alert.AlertType.INFORMATION, "Deposit Successful",
-                            "Deposit of $" + depositAmount + " is successful.");
-                    updateBalanceInFile(username, newBalance);
+                            "Please enter a valid deposit amount.");
                 }
             }
         });
@@ -328,17 +337,26 @@ public class BlackjackPane extends Application {
         withdrawButton.setOnAction(event -> {
             String withdrawAmountStr = withdrawTextField.getText();
             if (!withdrawAmountStr.isEmpty()) {
-                double withdrawAmount = Double.parseDouble(withdrawAmountStr);
-                if (withdrawAmount <= currentUser.getBalance()) {
-                    double newBalance = currentUser.getBalance() - withdrawAmount;
-                    currentUser.setBalance(newBalance);
-                    balanceLabel.setText("Current Balance: $" + newBalance);
-                    showAlert(Alert.AlertType.INFORMATION, "Withdraw Successful",
-                            "Withdraw of $" + withdrawAmount + " is successful.");
-                    updateBalanceInFile(username, newBalance);
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Insufficient Balance",
-                            "Insufficient balance to make the withdrawal.");
+                try {
+                    double withdrawAmount = Double.parseDouble(withdrawAmountStr);
+                    if (withdrawAmount <= currentUser.getBalance()) {
+                        double newBalance = currentUser.getBalance() - withdrawAmount;
+                        currentUser.setBalance(newBalance);
+                        balanceLabel.setText("Current Balance: $" + newBalance);
+                        showAlert(Alert.AlertType.INFORMATION, "Withdraw Successful",
+                                "Withdraw of $" + withdrawAmount + " is successful.");
+                        updateBalanceInFile(username, newBalance);
+                    } else if (withdrawAmount < 0){
+                        showAlert(Alert.AlertType.ERROR, "Invalid Withdraw Amount",
+                                "The minimum withdraw amount is $0");
+                    }
+                    else {
+                        showAlert(Alert.AlertType.ERROR, "Insufficient Balance",
+                                "Insufficient balance to make the withdrawal.");
+                    }
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Invalid Withdraw Amount",
+                            "Please enter a valid withdraw amount.");
                 }
             }
         });
@@ -373,21 +391,25 @@ public class BlackjackPane extends Application {
         // Disable the hit and stand buttons initially
         hitButton.setDisable(true);
         standButton.setDisable(true);
-    
-        /*placeBetButton.setOnAction(event -> {
-            String betAmountStr = betTextField.getText();
-            if (!betAmountStr.isEmpty()) {
-                double betAmount = Double.parseDouble(betAmountStr);
-                currentUser.setBet(betAmount);
-                showAlert(Alert.AlertType.INFORMATION, "Bet Placed", "Bet of $" + betAmount + " placed.");
-                disableBetInput(); // Disable the bet input after placing the bet
-                hitButton.setDisable(false);
-                standButton.setDisable(false);
-                placeBetButton.setDisable(true);
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Invalid Bet Amount", "Please enter a valid bet amount.");
-            }
-        });*/
+
+        /*
+         * placeBetButton.setOnAction(event -> {
+         * String betAmountStr = betTextField.getText();
+         * if (!betAmountStr.isEmpty()) {
+         * double betAmount = Double.parseDouble(betAmountStr);
+         * currentUser.setBet(betAmount);
+         * showAlert(Alert.AlertType.INFORMATION, "Bet Placed", "Bet of $" + betAmount +
+         * " placed.");
+         * disableBetInput(); // Disable the bet input after placing the bet
+         * hitButton.setDisable(false);
+         * standButton.setDisable(false);
+         * placeBetButton.setDisable(true);
+         * } else {
+         * showAlert(Alert.AlertType.ERROR, "Invalid Bet Amount",
+         * "Please enter a valid bet amount.");
+         * }
+         * });
+         */
 
         hitButton.setOnAction(e -> handleHit());
         standButton.setOnAction(e -> handleStand());
@@ -439,7 +461,7 @@ public class BlackjackPane extends Application {
         resetBetInput();
 
         // Display the dealer's card
-        
+
         ImageView dealerCardImage = getCardImageView(game.getComputer().getDealerCard());
         dealerCardPane.getChildren().add(dealerCardImage);
 
@@ -511,9 +533,9 @@ public class BlackjackPane extends Application {
         gameButtonBox.setAlignment(Pos.CENTER);
         gameButtonBox.getChildren().addAll(hitButton, standButton);
 
-        this.betTextField = new TextField(); 
-        this.placeBetButton = new Button("Place Bet"); 
-        Label betLabel = new Label(); 
+        this.betTextField = new TextField();
+        this.placeBetButton = new Button("Place Bet");
+        Label betLabel = new Label();
         VBox betBox = new VBox(10);
         betBox.setAlignment(Pos.CENTER);
         betBox.getChildren().addAll(betTextField, placeBetButton);
@@ -534,19 +556,27 @@ public class BlackjackPane extends Application {
         placeBetButton.setOnAction(event -> {
             String betAmountStr = betTextField.getText();
             if (!betAmountStr.isEmpty()) {
-                double betAmount = Double.parseDouble(betAmountStr);
-                if (betAmount <= currentUser.getBalance()) {
-                    currentUser.setBet(betAmount);
-                    betLabel.setText("Bet Placed: $" + betAmount);
-                    showAlert(Alert.AlertType.INFORMATION, "Bet Placed",
-                            "Bet of $" + betAmount + " is placed.");
-                    disableBetInput(); // Disable the bet input after placing the bet
-                    hitButton.setDisable(false);
-                    standButton.setDisable(false);
-                    placeBetButton.setDisable(true);
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Insufficient Balance",
-                            "Insufficient balance to place the bet.");
+                try {
+                    double betAmount = Double.parseDouble(betAmountStr);
+                    if (betAmount <= currentUser.getBalance() && betAmount > 0) {
+                        currentUser.setBet(betAmount);
+                        betLabel.setText("Bet Placed: $" + betAmount);
+                        showAlert(Alert.AlertType.INFORMATION, "Bet Placed",
+                                "Bet of $" + betAmount + " is placed.");
+                        disableBetInput(); // Disable the bet input after placing the bet
+                        hitButton.setDisable(false);
+                        standButton.setDisable(false);
+                        placeBetButton.setDisable(true);
+                    } else if (betAmount < 0){
+                        showAlert(Alert.AlertType.ERROR, "Invalid Input",
+                                "Please enter a positive number.");
+                    } else if(betAmount > currentUser.getBalance()){
+                        showAlert(Alert.AlertType.ERROR, "Insufficient Balance",
+                                "Insufficient balance to place the bet.");
+                    }
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Invalid Input",
+                            "Please enter a valid number.");
                 }
 
             }
@@ -604,7 +634,7 @@ public class BlackjackPane extends Application {
 
     private void handleHit() {
         Card card = deck.deal();
-        //reduce the card if it is an ace and if it causes the player to go over 21
+        // reduce the card if it is an ace and if it causes the player to go over 21
         if (card.getRank() == "Ace" && playerHand.getValue() + 11 > 21) {
             card.setValue(1);
         }
@@ -638,7 +668,7 @@ public class BlackjackPane extends Application {
         game.dealerTurn();
 
         for (Card card : dealerHand) {
-            //if the card is the first card, don't add it
+            // if the card is the first card, don't add it
             if (card == dealerHand.get(0)) {
                 continue;
             }
@@ -646,7 +676,7 @@ public class BlackjackPane extends Application {
             dealerCardPane.getChildren().add(cardView);
         }
         this.game.getComputer().decideBet();
-        //this.game.getComputer().setBet(100);
+        // this.game.getComputer().setBet(100);
         int playerScore = playerHand.getValue();
         int dealerScore = dealerHand.getValue();
 
@@ -658,7 +688,6 @@ public class BlackjackPane extends Application {
         postGameButtonBox.setVisible(true);
         updateBalanceInFile(loggedInUsername.get(), currentUser.getBalance());
     }
-
 
     private void disableButtons() {
         hitButton.setDisable(true);
