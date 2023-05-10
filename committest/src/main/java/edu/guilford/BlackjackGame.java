@@ -185,7 +185,7 @@ public class BlackjackGame {
 
     /**Updates the cards the computer can see */
     public void updateVisibleCards() {
-        computer.setDealerCard(dealer.getHand().get(1));
+        computer.setDealerCard(dealer.getHand().get(0));
         //clear the visible cards if there are cards in the list
         if (computer.getVisibleCards().size() > 0) {
             computer.getVisibleCards().clear();

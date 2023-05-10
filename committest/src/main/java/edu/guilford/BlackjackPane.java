@@ -2,6 +2,7 @@ package edu.guilford;
 
 import javafx.scene.Node;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -27,6 +28,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
@@ -57,6 +59,11 @@ public class BlackjackPane extends Application {
     private static Path userFile;
     private User currentUser;
     private Label balanceLabel;
+    private TextField betTextField;
+    private Label betLabel;
+    private Button placeBetButton;
+    private SimpleBooleanProperty betPlaced = new SimpleBooleanProperty(false);
+    private SimpleBooleanProperty gameInProgress = new SimpleBooleanProperty(false);
 
     public static void main(String[] args) {
         try {
@@ -103,6 +110,10 @@ public class BlackjackPane extends Application {
         return false;
     }
 
+    private void updateBetAndBalanceLabels() {
+        betLabel.setText("Bet: $" + currentUser.getBet());
+        balanceLabel.setText("Balance: $" + currentUser.getBalance());
+    }
     private void showSignUpScreen(Stage primaryStage) {
         DialogPane dialogPane = new DialogPane();
         dialogPane.setHeaderText("Sign Up");
@@ -355,14 +366,44 @@ public class BlackjackPane extends Application {
 
         BorderPane root = createGUI();
 
-        Scene scene = new Scene(root, 1000, 800);
+        Scene scene = new Scene(root, 1400, 800);
         gameStage.setScene(scene);
         gameStage.show();
+
+        // Disable the hit and stand buttons initially
+        hitButton.setDisable(true);
+        standButton.setDisable(true);
+    
+        /*placeBetButton.setOnAction(event -> {
+            String betAmountStr = betTextField.getText();
+            if (!betAmountStr.isEmpty()) {
+                double betAmount = Double.parseDouble(betAmountStr);
+                currentUser.setBet(betAmount);
+                showAlert(Alert.AlertType.INFORMATION, "Bet Placed", "Bet of $" + betAmount + " placed.");
+                disableBetInput(); // Disable the bet input after placing the bet
+                hitButton.setDisable(false);
+                standButton.setDisable(false);
+                placeBetButton.setDisable(true);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Invalid Bet Amount", "Please enter a valid bet amount.");
+            }
+        });*/
+
+        hitButton.setOnAction(e -> handleHit());
+        standButton.setOnAction(e -> handleStand());
     }
 
     private void enableButtons() {
         hitButton.setDisable(false);
         standButton.setDisable(false);
+    }
+
+    private ImageView getCardImageView(Card card) {
+        File cardImageFile = new File(card.getImagePath().toString());
+        ImageView cardImageView = new ImageView(cardImageFile.toURI().toString());
+        cardImageView.setFitWidth(100);
+        cardImageView.setPreserveRatio(true);
+        return cardImageView;
     }
 
     private void initializeGame() {
@@ -384,32 +425,43 @@ public class BlackjackPane extends Application {
         dealerLabel.setText("Dealer: ");
         playerLabel.setText("Player: ");
         resultLabel.setText("");
-        playerValueLabel.setText("");
-        dealerValueLabel.setText("");
+        int playerScore = playerHand.getValue();
+        playerValueLabel.setText("Player Value: " + playerScore);
+        dealerValueLabel.setText("Dealer Value: ");
+        balanceLabel.setText("Current Balance: $" + currentUser.getBalance());
+        betPlaced.set(false);
 
         FlowPane dealerCardPane = (FlowPane) ((HBox) dealerLabel.getParent()).getChildren().get(1);
         FlowPane playerCardPane = (FlowPane) ((HBox) playerLabel.getParent()).getChildren().get(1);
 
         dealerCardPane.getChildren().clear();
         playerCardPane.getChildren().clear();
+        resetBetInput();
 
         // Display the dealer's card
         
-        Label dealerCardLabel = new Label(game.getComputer().getDealerCard().toString());
-        dealerCardLabel.setFont(Font.font(16));
-        dealerCardLabel.setTextFill(Color.BLACK);
-        dealerCardPane.getChildren().add(dealerCardLabel);
+        ImageView dealerCardImage = getCardImageView(game.getComputer().getDealerCard());
+        dealerCardPane.getChildren().add(dealerCardImage);
 
         for (Card card : playerHand) {
-            Label cardLabel = new Label(card.toString());
-            cardLabel.setFont(Font.font(16));
-            cardLabel.setTextFill(Color.BLACK);
-            playerCardPane.getChildren().add(cardLabel);
+            ImageView cardImageView = getCardImageView(card);
+            playerCardPane.getChildren().add(cardImageView);
         }
         // Enable the buttons
         hitButton.setDisable(false);
         standButton.setDisable(false);
         postGameButtonBox.setVisible(false);
+    }
+
+    private void resetBetInput() {
+        betTextField.clear();
+        betTextField.setDisable(false);
+        placeBetButton.setDisable(false);
+    }
+
+    private void disableBetInput() {
+        betTextField.setDisable(true);
+        placeBetButton.setDisable(true);
     }
 
     private BorderPane createGUI() {
@@ -418,14 +470,18 @@ public class BlackjackPane extends Application {
 
         HBox dealerBox = createHandBox("Dealer", dealerHand, true);
         dealerLabel = (Label) dealerBox.getChildren().get(0);
-        dealerValueLabel = new Label();
+        dealerValueLabel = new Label("Dealer Value:");
 
         HBox playerBox = createHandBox("Player", playerHand, false);
         playerLabel = (Label) playerBox.getChildren().get(0);
-        playerValueLabel = new Label();
+        int playerScore = playerHand.getValue();
+        playerValueLabel = new Label("Player Value: " + playerScore);
 
         VBox scoreBox = new VBox(20);
         scoreBox.setAlignment(Pos.CENTER);
+
+        TextField betTextField = new TextField();
+        placeBetButton = new Button("Place Bet");
 
         Label dealerScoreLabel = new Label("Dealer: ");
         dealerScoreLabel.setFont(Font.font(20));
@@ -439,11 +495,8 @@ public class BlackjackPane extends Application {
         resultLabel.setFont(Font.font(16));
         resultLabel.setTextFill(Color.BLACK);
 
-        playerValueLabel = new Label();
-        dealerValueLabel = new Label();
-
         scoreBox.getChildren().addAll(dealerScoreLabel, dealerValueLabel, playerScoreLabel, playerValueLabel,
-                resultLabel);
+                resultLabel, balanceLabel);
 
         HBox buttonBox = new HBox(20);
         buttonBox.setAlignment(Pos.CENTER);
@@ -458,6 +511,13 @@ public class BlackjackPane extends Application {
         gameButtonBox.setAlignment(Pos.CENTER);
         gameButtonBox.getChildren().addAll(hitButton, standButton);
 
+        this.betTextField = new TextField(); 
+        this.placeBetButton = new Button("Place Bet"); 
+        Label betLabel = new Label(); 
+        VBox betBox = new VBox(10);
+        betBox.setAlignment(Pos.CENTER);
+        betBox.getChildren().addAll(betTextField, placeBetButton);
+        playerBox.getChildren().add(betBox);
         Button playAgainButton = new Button("Play Again");
         playAgainButton.setOnAction(e -> {
             resetGame();
@@ -469,6 +529,27 @@ public class BlackjackPane extends Application {
         returnButton.setOnAction(e -> {
             gameStage.close();
             showDepositWithdrawScreen(loggedInUsername.get());
+        });
+
+        placeBetButton.setOnAction(event -> {
+            String betAmountStr = betTextField.getText();
+            if (!betAmountStr.isEmpty()) {
+                double betAmount = Double.parseDouble(betAmountStr);
+                if (betAmount <= currentUser.getBalance()) {
+                    currentUser.setBet(betAmount);
+                    betLabel.setText("Bet Placed: $" + betAmount);
+                    showAlert(Alert.AlertType.INFORMATION, "Bet Placed",
+                            "Bet of $" + betAmount + " is placed.");
+                    disableBetInput(); // Disable the bet input after placing the bet
+                    hitButton.setDisable(false);
+                    standButton.setDisable(false);
+                    placeBetButton.setDisable(true);
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Insufficient Balance",
+                            "Insufficient balance to place the bet.");
+                }
+
+            }
         });
 
         postGameButtonBox = new HBox(20); // Assign the created HBox to the correct variable
@@ -502,17 +583,17 @@ public class BlackjackPane extends Application {
         if (isDealer) {
             if (!hand.isEmpty()) {
                 Card firstCard = game.getComputer().getDealerCard();
-                Label firstCardLabel = new Label(firstCard.toString());
-                firstCardLabel.setFont(Font.font(16));
-                firstCardLabel.setTextFill(Color.BLACK);
-                cardPane.getChildren().add(firstCardLabel);
+                ImageView firstCardView = getCardImageView(firstCard);
+                cardPane.getChildren().add(firstCardView);
             }
         } else {
             for (Card card : hand) {
-                Label cardLabel = new Label(card.toString());
-                cardLabel.setFont(Font.font(16));
-                cardLabel.setTextFill(Color.BLACK);
-                cardPane.getChildren().add(cardLabel);
+                // Label cardLabel = new Label(card.toString());
+                // cardLabel.setFont(Font.font(16));
+                // cardLabel.setTextFill(Color.BLACK);
+                ImageView cardView = getCardImageView(card);
+                cardPane.getChildren().add(cardView);
+
             }
         }
 
@@ -523,13 +604,18 @@ public class BlackjackPane extends Application {
 
     private void handleHit() {
         Card card = deck.deal();
+        //reduce the card if it is an ace and if it causes the player to go over 21
+        if (card.getRank() == "Ace" && playerHand.getValue() + 11 > 21) {
+            card.setValue(1);
+        }
         playerHand.addCard(card);
 
-        Label cardLabel = new Label(card.toString());
-        cardLabel.setFont(Font.font(16));
-        cardLabel.setTextFill(Color.BLACK);
+        // Label cardLabel = new Label(card.toString());
+        // cardLabel.setFont(Font.font(16));
+        // cardLabel.setTextFill(Color.BLACK);
 
-        ((FlowPane) ((HBox) playerLabel.getParent()).getChildren().get(1)).getChildren().add(cardLabel);
+        ImageView cardImageView = getCardImageView(card);
+        ((FlowPane) ((HBox) playerLabel.getParent()).getChildren().get(1)).getChildren().add(cardImageView);
 
         int playerScore = playerHand.getValue();
         playerValueLabel.setText("Player Value: " + playerScore);
@@ -549,28 +635,30 @@ public class BlackjackPane extends Application {
         FlowPane dealerCardPane = (FlowPane) ((HBox) dealerLabel.getParent()).getChildren().get(1);
         // Remove the "Hidden" label
 
-        boolean isFirstCard = true;
-
         game.dealerTurn();
 
         for (Card card : dealerHand) {
-            Label cardLabel = new Label(card.toString());
-            cardLabel.setFont(Font.font(16));
-            cardLabel.setTextFill(Color.BLACK);
-            dealerCardPane.getChildren().add(cardLabel);
+            //if the card is the first card, don't add it
+            if (card == dealerHand.get(0)) {
+                continue;
+            }
+            ImageView cardView = getCardImageView(card);
+            dealerCardPane.getChildren().add(cardView);
         }
-        this.currentUser.setBet(10);
         this.game.getComputer().decideBet();
         //this.game.getComputer().setBet(100);
         int playerScore = playerHand.getValue();
         int dealerScore = dealerHand.getValue();
 
         dealerValueLabel.setText("Dealer Value: " + dealerScore);
+        playerValueLabel.setText("Player Value: " + playerScore);
 
         this.game.resolveAll();
+        balanceLabel.setText("Balance: $" + currentUser.getBalance());
         postGameButtonBox.setVisible(true);
         updateBalanceInFile(loggedInUsername.get(), currentUser.getBalance());
     }
+
 
     private void disableButtons() {
         hitButton.setDisable(true);

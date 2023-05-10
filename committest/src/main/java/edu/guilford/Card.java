@@ -18,6 +18,7 @@ public class Card {
     private int value;
     private String color;
     private Path imagePath;
+    //sourced https://boardgames.stackexchange.com/questions/51426/where-can-i-download-high-quality-images-of-poker-cards for images
 
     //constructor
     /** Creates a card with a suit, rank, and value.
@@ -132,6 +133,20 @@ public class Card {
      */
     public void setColor(String color) {
         this.color = color;
+    }
+
+    /** Sets the image path of the card.
+     * @param imagePath
+     */
+    public void setImagePath(Path imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    /** Returns the image path of the card.
+     * @return Path imagePath
+     */
+    public Path getImagePath() {
+        return imagePath;
     }
     
     //override equals

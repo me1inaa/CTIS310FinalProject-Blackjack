@@ -113,7 +113,7 @@ public class Computer extends Player {
                     || this.getHand().get(0).getValue() == 4 && dealerCard.getValue() >= 5 && dealerCard.getValue() <= 6
                     || this.getHand().get(0).getValue() >= 2 && this.getHand().get(0).getValue() <= 3
                             && dealerCard.getValue() <= 7) {
-                split();
+                //split();
                 hit = false;
             }
         }
