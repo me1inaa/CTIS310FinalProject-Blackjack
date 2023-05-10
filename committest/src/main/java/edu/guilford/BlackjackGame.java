@@ -276,6 +276,7 @@ public class BlackjackGame {
 
     // resolves for all players
     /** Resolves for all players.
+     * @return ArrayList<String> messageArray, the messages for each player
      */
     public ArrayList<String> resolveAll() {
         // sets the gameState to resolving
@@ -292,6 +293,10 @@ public class BlackjackGame {
     }
 
     // resolves for a single player
+    /** Resolves for a single player.
+     * @param player
+     * @return String message - the message for the player
+     */
     private String resolve(Player player) {
         String message = "";
         Hand playerHand = player.getHand();
@@ -408,14 +413,5 @@ public class BlackjackGame {
         }
         return str;
     }
-    /*
-     * public User getUser(String username, String password) {
-     * for (Player user : players) {
-     * if (user.getName().equals(username) && user.getPassword().equals(password)) {
-     * return user;
-     * }
-     * }
-     * return null;
-     * }
-     */
+
 }

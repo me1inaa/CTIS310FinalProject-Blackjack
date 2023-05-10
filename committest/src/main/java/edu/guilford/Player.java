@@ -134,7 +134,4 @@ public class Player {
         return name + ": \n\tHand: " + hand + "\n\tBet: " + bet + "\n\tBalance: $" + String.format("%.2f", balance);
     }
 
-
-
-    
 }

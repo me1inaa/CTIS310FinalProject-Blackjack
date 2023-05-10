@@ -3,8 +3,7 @@ package edu.guilford;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * The Hand class is a LinkedList of Cards.
+/** The Hand class is a LinkedList of Cards.
  * 
  * @param value The value of the hand to determine if the player has busted.
  */
@@ -13,22 +12,13 @@ public class Hand extends LinkedList<Card> {
     private int value = 0;
 
     // constructor
-    /**
-     * Creates an empty hand.
+    /** Creates an empty hand.
      */
     public Hand() {
         super();
     }
 
-    public void addCard(Card card) {
-        this.add(card);
-    }
-    public List<Card> getCards() {
-        return this;
-      }
-
-    /**
-     * Creates a hand with a card. Used for splitting.
+    /** Creates a hand with a card. Used for splitting.
      * 
      * @param card
      */
@@ -39,8 +29,7 @@ public class Hand extends LinkedList<Card> {
     }
 
     // methods
-    /**
-     * Returns the value of the hand.
+    /** Returns the value of the hand.
      * 
      * @return int value
      */
@@ -49,8 +38,7 @@ public class Hand extends LinkedList<Card> {
         return value;
     }
 
-    /**
-     * Returns the value of the hand.
+    /** Returns the value of the hand.
      * 
      * @return int value
      */
@@ -66,28 +54,9 @@ public class Hand extends LinkedList<Card> {
         }
         this.setValue(total);
     }
-    public int getScore() {
-        int score = 0;
-        int numAces = 0;
-      
-        for (Card card : this) {
-          score += card.getValue();
-      
-          if (card.getRank().equals("Ace")) {
-            numAces++;
-          }
-        }
-      
-        while (score > 21 && numAces > 0) {
-          score -= 10;
-          numAces--;
-        }
-      
-        return score;
-      }
+
     // split
-    /**
-     * Removes the second card from the hand and returns it.
+    /** Removes the second card from the hand and returns it.
      * 
      * @return an new hand with the second card.
      */
@@ -102,10 +71,9 @@ public class Hand extends LinkedList<Card> {
     }
 
     // toString
-    /**
-     * Returns a string representation of the hand.
+    /** Returns a string representation of the hand.
      * 
-     * @return String output
+     * @return String output of each card separated by a comma.
      */
     @Override
     public String toString() {

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 /**
  * The Deck class is a LinkedList of Cards.
+ * @extends LinkedList<Card>
  */
 
 public class Deck extends LinkedList<Card>{

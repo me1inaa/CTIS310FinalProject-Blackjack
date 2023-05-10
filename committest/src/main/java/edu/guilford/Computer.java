@@ -6,9 +6,10 @@ import java.util.ArrayList;
  /** This class represents a computer player in a game of Blackjack.
  * 
  * @extends Player
- * @param count
- * @param hit
- * @param visibleCards
+ * @param count - point system for card counting algorithm
+ * @param hit - variable that holds whether the Computer hits
+ * @param visibleCards - variable that holds the visible cards to the computer
+ * @param dealerCard - variable that holds the dealer's card
  */
 // https://www.freecodecamp.org/news/i-used-programming-to-figure-out-how-card-counting-really-works-7ecefdb1b8d4/
 // https://towardsdatascience.com/beating-the-dealer-with-simple-statistics-71b5e3701638
@@ -18,7 +19,7 @@ public class Computer extends Player {
     private double count;
     // variable that holds whether the Computer hits
     private boolean hit = false;
-    // variable that holds teh visible cards to the computer
+    // variable that holds the visible cards to the computer
     private ArrayList<Card> visibleCards;
     private Card dealerCard;
 

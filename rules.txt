@@ -1,0 +1,20 @@
+Blackjack is a popular card game that is played in casinos around the world. 
+The objective of the game is to have a hand value of 21 or as close to 21 as possible without going over. 
+In a basic game of blackjack, there are typically one to eight decks of playing cards, and each card has a point value:
+
+Number cards 2-10 are worth their face value
+Face cards (Jack, Queen, King) are worth 10 points each
+Aces are worth either 1 or 11 points, depending on what is better for the hand
+
+At the beginning of the game, the dealer will deal two cards to each player and one card to themselves. 
+The players' cards are dealt face up, while the dealer's first card is dealt face down (the hole card) and the second card is dealt face up. 
+The players will then decide whether to "hit" (take another card) or "stand" (keep their current hand). 
+The objective is to get as close to 21 as possible without going over.
+
+If a player's hand goes over 21, they "bust" and lose their bet. 
+If a player's hand is closer to 21 than the dealer's hand, the player wins their bet. 
+If the dealer's hand is closer to 21 than the player's hand, the player loses their bet. 
+If the player's hand and the dealer's hand have the same value, it is a "push" and the player neither wins nor loses.
+If the dealer's hand goes over 21, they bust and all players who did not bust win their bets.
+
+In this variation of the game, the dealer is be required to hit until their hand value is at least 17.
