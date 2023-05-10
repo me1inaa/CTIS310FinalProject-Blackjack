@@ -277,42 +277,45 @@ public class BlackjackGame {
     // resolves for all players
     /** Resolves for all players.
      */
-    public void resolveAll() {
+    public ArrayList<String> resolveAll() {
         // sets the gameState to resolving
         gameState = GameState.RESOLVING;
         // dealer's hand
         Hand dealerHand = dealer.getHand();
         // for each player
+        ArrayList<String> messageArray = new ArrayList<String>();
         for (Player player : players) {
-            resolve(player);
+            messageArray.add(resolve(player));
         }
+
+        return messageArray;
     }
 
     // resolves for a single player
-    private void resolve(Player player) {
-        
+    private String resolve(Player player) {
+        String message = "";
         Hand playerHand = player.getHand();
         Hand dealerHand = dealer.getHand();
         // if the player busts, the dealer wins
         if (playerHand.getValue() > 21) {
-            System.out.println("You busted. Dealer wins.");
+            message = "You busted. Dealer wins.";
             // removes the bet from the player's balance
             player.setBalance(player.getBalance() - player.getBet());
         } else if (playerHand.getValue() == 21) {
             // if the dealer busts, the player wins
             if (dealerHand.getValue() > 21) {
-                System.out.println("Dealer busted. You win.");
+                message = "Dealer busted. You win.";
                 // adds the bet to the player's balance
                 player.setBalance(player.getBalance() + player.getBet());
             }
             // if the player and dealer both have the same, it's a push
             else if (playerHand.getValue() == 21 && dealerHand.getValue() == 21) {
-                System.out.println("Push.");
+                message = "Push. Nobody wins.";
                 // balance remains the same, nobody wins or loses
             }
             // if the player has 21 and the dealer doesn't, the player wins
             else if (playerHand.getValue() == 21 && dealerHand.getValue() != 21) {
-                System.out.println("You win.");
+                message = "You win.";
                 // adds the bet to the player's balance
                 player.setBalance(player.getBalance() + player.getBet());
             }
@@ -320,24 +323,24 @@ public class BlackjackGame {
         else if (playerHand.getValue() < 21) {
             // if the dealer busts, the player wins
             if (dealerHand.getValue() > 21) {
-                System.out.println("Dealer busted. You win.");
+                message = "Dealer busted. You win.";
                 // adds the bet to the player's balance
                 player.setBalance(player.getBalance() + player.getBet());
             }
             // if the player and dealer both have the same, it's a push
             else if (playerHand.getValue() == dealerHand.getValue()) {
-                System.out.println("Push.");
+                message = "Push.";
                 // balance remains the same, nobody wins or loses
             }
             // if the player has more than the dealer, the player wins
             else if (playerHand.getValue() > dealerHand.getValue()) {
-                System.out.println("You win.");
+                message = "You win.";
                 // adds the bet to the player's balance
                 player.setBalance(player.getBalance() + player.getBet());
             }
             // if the dealer has more than the player, the dealer wins
             else if (playerHand.getValue() < dealerHand.getValue()) {
-                System.out.println("Dealer wins.");
+                message = "Dealer wins.";
                 // removes the bet from the player's balance
                 player.setBalance(player.getBalance() - player.getBet());
             }
@@ -345,6 +348,7 @@ public class BlackjackGame {
         
         // resets the bet
         player.setBet(0);
+        return message;
     }
 
     // end the game

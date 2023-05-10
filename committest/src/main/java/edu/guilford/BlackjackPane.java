@@ -607,7 +607,7 @@ public class BlackjackPane extends Application {
                         standButton.setDisable(false);
                         placeBetButton.setDisable(true);
                         showCards();
-                    } else if (betAmount < 0){
+                    } else if (betAmount <= 0){
                         showAlert(Alert.AlertType.ERROR, "Invalid Input",
                                 "Please enter a positive number.");
                     } else if(betAmount > currentUser.getBalance()){
@@ -699,13 +699,10 @@ public class BlackjackPane extends Application {
 
         int playerScore = playerHand.getValue();
         playerValueLabel.setText("Player Value: " + playerScore);
-        // dealerValueLabel.setText("Dealer Value: " + dealerHand.getValue());
 
         if (playerScore > 21) {
-            resultLabel.setText("Player busts! Dealer wins!");
             handleStand();
         } else if (playerScore == 21) {
-            resultLabel.setText("Player wins!");
             handleStand();
         }
     }
@@ -734,7 +731,7 @@ public class BlackjackPane extends Application {
         dealerValueLabel.setText("Dealer Value: " + dealerScore);
         playerValueLabel.setText("Player Value: " + playerScore);
 
-        this.game.resolveAll();
+        resultLabel.setText(this.game.resolveAll().get(1));
         balanceLabel.setText("Balance: $" + currentUser.getBalance());
         postGameButtonBox.setVisible(true);
         updateBalanceInFile(loggedInUsername.get(), currentUser.getBalance());
