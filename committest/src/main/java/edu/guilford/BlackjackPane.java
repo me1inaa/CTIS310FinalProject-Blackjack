@@ -149,7 +149,7 @@ public class BlackjackPane extends Application {
             if (!username.isEmpty()) {
                 double balance = 0.0; // Default balance
                 if (createNewUser(username, balance)) {
-                    showAlert(Alert.AlertType.INFORMATION, "Sign Up Successful", "User created successfully.");
+                    showAlert(Alert.AlertType.INFORMATION, "Sign Up Successful", "User created successfully. Return back to the Login screen.");
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Sign Up Error", "Failed to create user.");
                 }
@@ -470,9 +470,11 @@ public class BlackjackPane extends Application {
             playerCardPane.getChildren().add(cardImageView);
         }
         // Enable the buttons
-        hitButton.setDisable(false);
-        standButton.setDisable(false);
+        hitButton.setDisable(true);
+        standButton.setDisable(true);
         postGameButtonBox.setVisible(false);
+
+        hideCards();
     }
 
     private void resetBetInput() {
@@ -484,6 +486,40 @@ public class BlackjackPane extends Application {
     private void disableBetInput() {
         betTextField.setDisable(true);
         placeBetButton.setDisable(true);
+    }
+
+    private void showCards() {
+        FlowPane dealerCardPane = (FlowPane) ((HBox) dealerLabel.getParent()).getChildren().get(1);
+        FlowPane playerCardPane = (FlowPane) ((HBox) playerLabel.getParent()).getChildren().get(1);
+
+        //iterate through the children in the pane and setVisible to true
+        for (Node node : dealerCardPane.getChildren()) {
+            node.setVisible(true);
+            node.managedProperty().bind(node.visibleProperty());
+        }
+
+        for (Node node : playerCardPane.getChildren()) {
+            node.setVisible(true);
+            node.managedProperty().bind(node.visibleProperty());
+        }
+
+        playerValueLabel.setText("Player: " + playerHand.getValue());
+    }
+
+    private void hideCards(){
+        FlowPane dealerCardPane = (FlowPane) ((HBox) dealerLabel.getParent()).getChildren().get(1);
+        FlowPane playerCardPane = (FlowPane) ((HBox) playerLabel.getParent()).getChildren().get(1);
+
+        //iterate through the children in the pane and setVisible to true
+        for (Node node : dealerCardPane.getChildren()) {
+            node.setVisible(false);
+        }
+
+        for (Node node : playerCardPane.getChildren()) {
+            node.setVisible(false);
+        }
+
+        playerValueLabel.setText("Player: ");
     }
 
     private BorderPane createGUI() {
@@ -541,6 +577,9 @@ public class BlackjackPane extends Application {
         betBox.getChildren().addAll(betTextField, placeBetButton);
         playerBox.getChildren().add(betBox);
         Button playAgainButton = new Button("Play Again");
+
+        hideCards();
+
         playAgainButton.setOnAction(e -> {
             resetGame();
             gameButtonBox.getChildren().clear();
@@ -567,6 +606,7 @@ public class BlackjackPane extends Application {
                         hitButton.setDisable(false);
                         standButton.setDisable(false);
                         placeBetButton.setDisable(true);
+                        showCards();
                     } else if (betAmount < 0){
                         showAlert(Alert.AlertType.ERROR, "Invalid Input",
                                 "Please enter a positive number.");
@@ -634,9 +674,19 @@ public class BlackjackPane extends Application {
 
     private void handleHit() {
         Card card = deck.deal();
-        // reduce the card if it is an ace and if it causes the player to go over 21
-        if (card.getRank() == "Ace" && playerHand.getValue() + 11 > 21) {
-            card.setValue(1);
+        
+        if (playerHand.getValue() + card.getValue() > 21) {
+            // if there is an ace in the dealer's hand set it to one
+            for (Card c : playerHand) {
+                if (c.getValue() == 11) {
+                    c.setValue(1);
+                    System.out.println("Dealer's hand: \n\t" + dealerHand);
+                }
+            }
+            // if the card is an ace set it to one
+            if (card.getValue() == 11) {
+                card.setValue(1);
+            }
         }
         playerHand.addCard(card);
 
@@ -655,6 +705,7 @@ public class BlackjackPane extends Application {
             resultLabel.setText("Player busts! Dealer wins!");
             handleStand();
         } else if (playerScore == 21) {
+            resultLabel.setText("Player wins!");
             handleStand();
         }
     }

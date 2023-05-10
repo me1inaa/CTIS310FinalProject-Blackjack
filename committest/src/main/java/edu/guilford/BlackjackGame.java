@@ -254,8 +254,18 @@ public class BlackjackGame {
         while (dealerHand.getValue() < 17) {
             Card card = deck.draw();
             //prevents te dealer from busting if he draws an Ace
-            if (card.getValue() == 11 && dealerHand.getValue() + 11 > 21) {
-                card.setValue(1);
+            if (dealerHand.getValue() + card.getValue() > 21) {
+                // if there is an ace in the dealer's hand set it to one
+                for (Card c : dealerHand) {
+                    if (c.getValue() == 11) {
+                        c.setValue(1);
+                        System.out.println("Dealer's hand: \n\t" + dealerHand);
+                    }
+                }
+                // if the card is an ace set it to one
+                if (card.getValue() == 11) {
+                    card.setValue(1);
+                }
             }
             dealerHand.add(card);
             // prints out the dealer's hand
